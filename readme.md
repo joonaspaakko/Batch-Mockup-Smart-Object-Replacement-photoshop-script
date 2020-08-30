@@ -1,5 +1,5 @@
 
-![](../script/Batch Mockup Smart Object Replacement.gif)
+![](https://github.com/joonaspaakko/Batch-Mockup-Smart-Object-Replacement-photoshop-script/blob/master/script/Batch%20Mockup%20Smart%20Object%20Replacement.gif)
 
 # Batch Mockup Smart Object Replacement.js Photoshop script <!-- omit in toc -->
 
