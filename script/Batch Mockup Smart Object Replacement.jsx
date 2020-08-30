@@ -1,5 +1,5 @@
 
-// v.1.0.
+// v.1.1.
 // Batch Mockup Smart Object Replacement.jsx
 // You'll need to incplude this file to another script file:
 // #include "../script/Batch Mockup Smart Object Replacement.jsx" 
@@ -109,6 +109,17 @@ mockups([
 */
 
 
+// CHANGELOG
+
+
+// v.1.1.
+// Tested in Photoshop CC 2019
+// - Fixed an issue where an array of input files would silently fail to output every single file
+
+
+// v.1.0.
+// Tested in Photoshop CC 2019
+
 var includePath = '';
 if ( $.includePath ) includePath = File.decode($.includePath);
 var docPath = '';
@@ -169,6 +180,7 @@ function soReplace( rawData ) {
       var item = data.items[i];
       item.files = prepFiles( item );
     }
+    
     // This makes sure all file arrays are the same length
     data = evenOutFileArrays( data );
     replaceLoop( data );
@@ -244,7 +256,8 @@ function prepFiles( item ) {
   var inputFiles = [];
   for ( var i=0; i < item.input.length; i++ ) {
     var inputFolder = new Folder( item.input[i] );
-    inputFiles = getFiles( inputFolder, item );
+    var files = getFiles( inputFolder, item );
+    if ( files ) inputFiles = inputFiles.concat( files );
   };
   
   return inputFiles.sort(function (a, b) {

@@ -16,6 +16,7 @@ A script that can batch process multiple mockup files and is able to replace mul
     - [Transparent whitespace method 1 (fast)](#transparent-whitespace-method-1-fast)
     - [Transparent whitespace method 2 (precise)](#transparent-whitespace-method-2-precise)
   - [4. Dialogs interrupt the batch process](#4-dialogs-interrupt-the-batch-process)
+  - [5. The last input file sticks around in the output when using noRepeats: true](#5-the-last-input-file-sticks-around-in-the-output-when-using-norepeats-true)
 
 
 ## Usage
@@ -233,3 +234,7 @@ For a real world example, see the mug example in `example-1/` (black mug).
 ### 4. Dialogs interrupt the batch process
 
 There are 3 dialog types that may interrupt the bathc process. All of them should have a checkbox that says either `Don't show on document open` or `Don't show again`, that I would recommend you tick.
+
+### 5. The last input file sticks around in the output when using noRepeats: true
+
+Sometimes the smart objects in a mockup have been lifted to the top of the stack or perhaps separated into a labeled folder. This usually means that there is a duplicate smartobject somwhere in the document and so when the script runs out of input images, the `target` smart object is hidden, but the duplicate smart object is still there. The simplest fix is to change the target to that duplicate smart object instead.
