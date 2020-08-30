@@ -1,5 +1,5 @@
 
-// v.1.1.
+// v.1.2.
 // Batch Mockup Smart Object Replacement.jsx
 // You'll need to incplude this file to another script file:
 // #include "../script/Batch Mockup Smart Object Replacement.jsx" 
@@ -112,10 +112,13 @@ mockups([
 // CHANGELOG
 
 
+// v.1.2.
+// Tested in Photoshop CC 2019
+// - Fixed an issue with zero padding
+
 // v.1.1.
 // Tested in Photoshop CC 2019
 // - Fixed an issue where an array of input files would silently fail to output every single file
-
 
 // v.1.0.
 // Tested in Photoshop CC 2019
@@ -242,7 +245,7 @@ function replaceLoop( data ) {
 function parseFilename( data, fileIndex) {
   
   var fileNumber = fileIndex+1;
-  if ( data.output.zeroPadding ) fileNumber zeroPadding( fileNumber, data.maxLoop.toString().length );
+  if ( data.output.zeroPadding ) fileNumber = zeroPadding( fileNumber, data.maxLoop.toString().length );
   
   var filename = data.output.filename.replace('@mockup', data.doc.name).replace('$', fileNumber);
   
@@ -330,8 +333,6 @@ function findLargestArrayLength( items ) {
   
 }
 
-
-
 function replaceLoopOptionsFiller( rawData ) {
   
   // General fallbacks...
@@ -341,9 +342,10 @@ function replaceLoopOptionsFiller( rawData ) {
       format     : rawData.output.format || 'jpg',
       folders    : rawData.output.folders || false,
       filename   : rawData.output.filename || '@mockup - $',
-      zeroPadding: rawData.output.zeroPadding === undefined ? true: rawData.output.zeroPadding,
+      zeroPadding: rawData.output.zeroPadding === undefined ? true : rawData.output.zeroPadding,
     }
   };
+  
   if ( rawData.noRepeats === true ) data.noRepeats = true;
   
   // Document
