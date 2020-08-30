@@ -6,7 +6,7 @@ var output = {
   // Path prefix: "$/" points to the parent folder of this script. 
   // You could also use "./", which points to the parent folder of the psd mockup. 
   // The only place where you can't use "./" is in the "mockupPath"
-  path: '../../$/Examples - Outputs/example-1', 
+  path: '../$/example-1 (output)', 
   format: 'jpg', // 'jpg', 'png', 'tif', 'psd', 'pdf'
   folders: true, // Files will be grouped by folders inside the output folder
   filename: '$', 

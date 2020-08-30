@@ -2,7 +2,7 @@
 #include "../../script/Batch Mockup Smart Object Replacement.jsx" 
 
 var output = {
-  path: '../../$/Examples - Outputs/example-2', 
+  path: '../$/example-2 (output)', 
   format: 'jpg', 
   folders: true,
   filename: '$', 
