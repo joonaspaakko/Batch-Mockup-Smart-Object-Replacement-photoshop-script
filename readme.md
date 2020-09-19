@@ -23,7 +23,8 @@ A script that can batch process multiple mockup files and is able to replace mul
 
 I'd recommend making a project folder where you copy the mockup psd files, input files, and the script that initiates the batch process. `Batch Mockup Smart Object Replacement.jsx` doesn't need to be in this project folder.
 
-1. Download "Batch Mockup Smart Object Replacement.jsx"
+1. Download ["Batch Mockup Smart Object Replacement.jsx"](https://raw.githubusercontent.com/joonaspaakko/Batch-Mockup-Smart-Object-Replacement-photoshop-script/master/script/Batch%20Mockup%20Smart%20Object%20Replacement.jsx)
+    - This is the only file you need. The examples cause the repo to be around ~100MB.
 2. Create a new `.jsx` file that will initiate the batch process
     - Make sure to `#include "Batch Mockup Smart Object Replacement.jsx"`, wherever you put it. 
     - This is _just about the minimum setup_ for the initiating script file:

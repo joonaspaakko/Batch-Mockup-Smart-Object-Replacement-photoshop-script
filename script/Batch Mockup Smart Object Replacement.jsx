@@ -1,5 +1,5 @@
 
-// v.1.2.
+// v.1.3.
 // Batch Mockup Smart Object Replacement.jsx
 // You'll need to incplude this file to another script file:
 // #include "../script/Batch Mockup Smart Object Replacement.jsx" 
@@ -111,6 +111,9 @@ mockups([
 
 // CHANGELOG
 
+// v.1.3.
+// Tested in Photoshop CC 2019
+// - Fixed an issue that prevented you from leaving output settings empty in order to use the defaults
 
 // v.1.2.
 // Tested in Photoshop CC 2019
@@ -336,6 +339,7 @@ function findLargestArrayLength( items ) {
 function replaceLoopOptionsFiller( rawData ) {
   
   // General fallbacks...
+  rawData.output = rawData.output || {};
   var data = {
     output: {
       path       : rawData.output.path || '$/output',
