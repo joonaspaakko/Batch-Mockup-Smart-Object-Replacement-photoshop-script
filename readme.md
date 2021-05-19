@@ -84,7 +84,9 @@ mockups([
     output: {
       // General path info: 
       // - Paths need to be absolute or include the following prefixes: "$" or "."
-      // - ...Although, ou can get parent folders by combining them with "../", like so: "../$/mockup.psd", ".././mockup.psd"
+      // - You can get parent folders by combining them with "../"
+      //   - "../$/mockup-folder/output-folder" = Go one folder up from the triggering script file and put the files in "output-folder".
+      //   - "../.././output-folder/" = Go two folders up from the mockup psd file and put the files in "output-folder".
       // - Path prefix: "$/"
       //   - Points to the parent folder of the initiating script file. 
       //   - Can be used with all paths.
@@ -96,8 +98,15 @@ mockups([
       zeroPadding: true  // Set this to false if you don't want to add zero padding to the number suffix of the output images: (009, 010, ...100, 101). The padding is based on the amount of output images.
       folders: false, // Files will be grouped in folders inside the output folder
       // @mockup = mockup psd name
+      // @input = input filename from whichever smart object that has the most input files
       // $ = incremental numbers
-      filename: '@mockup - $', // Can be any static string, but make sure to include $.
+      // Can also be any static string, but make sure to at least include dollar sign to avoid overwriting.
+      // Examples:
+      // filename: 'My mockups - @mockup - $', 
+      // filename: 'My mockups - @input - $', // You don't need the dollar sign as long as there are no duplicate input files
+      // filename: 'My mockups - $', 
+      // filename: '$', 
+      filename: '@mockup - $', 
     }, 
     mockupPath: '', // Path to the mockup. For example: '../$/example-1/assets/Bus Stop Billboard MockUp/Bus Stop Billboard MockUp.psd'
     hideLayers: [], // Array of strings with unique layer names. Will be hidden before any replacements are made in the mockup.
@@ -126,6 +135,8 @@ mockups([
         // - Non-image files in the input folder will be ignored
         // - Input files are sorted alphanumerically in ascending order. This is also the output order. 
         // - You can add numbering if you want a specific order.
+        // Aray example:
+        // input: ['$/input-1', '$/input-2'],
         input: '', // String or Array. Path to the input files. 
         inputNested: false, // Set to true to dig deep in the input folder(s)
         inputFormats: 'tiff?|gif|jpe?g|bmp|eps|svg|png|ai|psd|pdf', // Separate multiple formats with a vertical pipe. 

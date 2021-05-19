@@ -1,5 +1,5 @@
 
-// v.1.3.
+// v.1.4.
 // Batch Mockup Smart Object Replacement.jsx
 // You'll need to incplude this file to another script file:
 // #include "../script/Batch Mockup Smart Object Replacement.jsx" 
@@ -28,7 +28,9 @@ mockups([
     output: {
       // General path info: 
       // - Paths need to be absolute or include the following prefixes: "$" or "."
-      // - ...Although, ou can get parent folders by combining them with "../", like so: "../$/mockup.psd", ".././mockup.psd"
+      // - You can get parent folders by combining them with "../"
+      //   - "../$/mockup-folder/output-folder" = Go one folder up from the triggering script file and put the files in "output-folder".
+      //   - "../.././output-folder/" = Go two folders up from the mockup psd file and put the files in "output-folder".
       // - Path prefix: "$/"
       //   - Points to the parent folder of the initiating script file. 
       //   - Can be used with all paths.
@@ -40,7 +42,14 @@ mockups([
       zeroPadding: true  // Set this to false if you don't want to add zero padding to the number suffix of the output images: (009, 010, ...100, 101). The padding is based on the amount of output images.
       folders: false, // Files will be grouped in folders inside the output folder
       // @mockup = mockup psd name
+      // @input = input filename from whichever smart object that has the most input files
       // $ = incremental numbers
+      // Can also be any static string, but make sure to at least include dollar sign to avoid overwriting.
+      // Examples:
+      // filename: 'My mockups - @mockup - $', 
+      // filename: 'My mockups - @input - $', // You don't need the dollar sign as long as there are no duplicate input files
+      // filename: 'My mockups - $', 
+      // filename: '$', 
       filename: '@mockup - $', // Can be any static string, but make sure to include $.
     }, 
     mockupPath: '', // Path to the mockup. For example: '../$/example-1/assets/Bus Stop Billboard MockUp/Bus Stop Billboard MockUp.psd'
@@ -110,6 +119,10 @@ mockups([
 
 
 // CHANGELOG
+
+// v.1.3.
+// Tested in Photoshop CC 2019
+// - Added a new "filename" keyword "@input", which takes the output filename from the input file of whichever smart object that has the most input files.
 
 // v.1.3.
 // Tested in Photoshop CC 2019
@@ -236,7 +249,8 @@ function replaceLoop( data ) {
       }
     }
     
-    var outputFileName = data.output.path + "/" + parseFilename( data, fileIndex );
+    var outputPathPrefix = data.output.path + "/";
+    var outputFileName = outputPathPrefix + parseFilename( data, fileIndex, outputPathPrefix );
     app.activeDocument.saveAs( new File( outputFileName ), saveOpts()[ data.output.format ](), true, Extension.LOWERCASE);
     
     if ( sourceFilePath === null ) app.activeDocument.activeLayer.visible = item.targetVisibility;
@@ -245,14 +259,26 @@ function replaceLoop( data ) {
   
 }
 
-function parseFilename( data, fileIndex) {
+function parseFilename( data, fileIndex, outputPathPrefix ) {
   
   var fileNumber = fileIndex+1;
   if ( data.output.zeroPadding ) fileNumber = zeroPadding( fileNumber, data.maxLoop.toString().length );
   
-  var filename = data.output.filename.replace('@mockup', data.doc.name).replace('$', fileNumber);
+  var inputFile = data.largestArray[fileIndex];
+  var inputFilename = inputFile ? inputFile.name.replace(/\.[^\.]+$/, '') : fileNumber;
+  // var hasInput = data.output.filename.match(/@input/);
+  var filename = data.output.filename.replace('@mockup', data.doc.name).replace('$', fileNumber).replace('@input', inputFilename);
   
-  return filename + "." + data.output.format;
+  var outputFilename = filename + "." + data.output.format;
+  
+  // if ( hasInput ) {
+  //   var testOutputFile = new File( outputPathPrefix + outputFilename );
+  //   if ( testOutputFile.exists ) {
+  //     outputFilename = filename + " (" +  fileNumber + ")." + data.output.format;
+  //   }
+  // }
+  
+  return outputFilename;
   
 }
 
@@ -304,7 +330,8 @@ function getFiles(folder, item) {
 
 function evenOutFileArrays( data ) {
   
-  data.maxLoop = findLargestArrayLength( data.items );
+  var largestArray = findLargestArrayLength( data.items );
+  data.maxLoop = largestArray.length;
   
   for ( var a=0; a < data.items.length; a++ ) {
     var item = data.items[a];
@@ -321,17 +348,21 @@ function evenOutFileArrays( data ) {
     }
   }
   
+  data.largestArray = largestArray;
+  
   return data;
   
 }
 
 function findLargestArrayLength( items ) {
   
-	var max = 0;
+	var max = [];
   for ( var i=0; i < items.length; i++ ) {
-    var filesLength = items[i].files.length;
-    if ( filesLength > max ) max = filesLength;
+    var cItems = items[i];
+    var filesLength = cItems.files.length;
+    if ( filesLength > max ) max = cItems.files;
   }
+  
   return max;
   
 }
