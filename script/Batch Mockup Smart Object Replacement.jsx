@@ -1,124 +1,48 @@
 
-// v.1.4.
+// v.1.5.
 // Batch Mockup Smart Object Replacement.jsx
+
 // You'll need to incplude this file to another script file:
 // #include "../script/Batch Mockup Smart Object Replacement.jsx" 
-// Check the example folders for a real world example.
+// Check the example folders for a few real world examples.
 
 // Minimal settings
 /*
+
+#include "Batch Mockup Smart Object Replacement.jsx"
+
+var outputOpts = {
+  path: '$/_output' 
+};
+
 mockups([
   
   {
-    mockupPath: '$/mockup.psd',
-    smartObjects: [
-      { target: '@replace' }, 
-    ]
-  },
-  
-]);
-*/
-
-// DEFAULT SETTINGS
-
-/*
-mockups([
-  
-  {
-    output: {
-      // General path info: 
-      // - Paths need to be absolute or include the following prefixes: "$" or "."
-      // - You can get parent folders by combining them with "../"
-      //   - "../$/mockup-folder/output-folder" = Go one folder up from the triggering script file and put the files in "output-folder".
-      //   - "../.././output-folder/" = Go two folders up from the mockup psd file and put the files in "output-folder".
-      // - Path prefix: "$/"
-      //   - Points to the parent folder of the initiating script file. 
-      //   - Can be used with all paths.
-      // - Path prefix: "./"
-      //   - Points to the parent folder of the psd mockup. 
-      //   - Can be used with all paths except "mockupPath".
-      path: '$/_output', // The output folder is created automatically.
-      format: 'jpg',     // 'jpg', 'png', 'tif', 'psd', 'pdf'
-      zeroPadding: true  // Set this to false if you don't want to add zero padding to the number suffix of the output images: (009, 010, ...100, 101). The padding is based on the amount of output images.
-      folders: false, // Files will be grouped in folders inside the output folder
-      // @mockup = mockup psd name
-      // @input = input filename from whichever smart object that has the most input files
-      // $ = incremental numbers
-      // Can also be any static string, but make sure to at least include dollar sign to avoid overwriting.
-      // Examples:
-      // filename: 'My mockups - @mockup - $', 
-      // filename: 'My mockups - @input - $', // You don't need the dollar sign as long as there are no duplicate input files
-      // filename: 'My mockups - $', 
-      // filename: '$', 
-      filename: '@mockup - $', // Can be any static string, but make sure to include $.
-    }, 
-    mockupPath: '', // Path to the mockup. For example: '../$/example-1/assets/Bus Stop Billboard MockUp/Bus Stop Billboard MockUp.psd'
-    hideLayers: [], // Array of strings with unique layer names. Will be hidden before any replacements are made in the mockup.
-    showLayers: [], // Array of strings with unique layer names. Will be shown before any replacements are made in the mockup. Smart object "target" layer is always shown...
-    // If you have multiple smart objects per mockup and let's say one of them has 2 input images and another has 6 input images, the default behavior is that the smaller array of images is supplemented by using duplicates:
-    // SO #1 inputs: ['1.jpg', '2.jpg']
-    // SO #2 inputs: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg']
-    // Input #1 will end up looking like this: ['1.jpg', '2.jpg', '1.jpg', '2.jpg', '1.jpg', '2.jpg']
-    // With noRepeats true, the so content swapping is stopped once the input images run out and the smart object is hidden.
-    // This may require you to set a separate background fill behind the smart object in some cases.
-    noRepeats: false, 
+    output: outputOpts,
+    mockupPath: '$/mockup/file.psd',
     smartObjects: [
       {
-        // Unique smart object layer name. Sometimes mockups have multiple layers with the same name. Make sure they are unique. I recommend adding a '@' to the front of the layer name.
-        target: '', // String
-        // Same as with "target", make sure this a unique layer name.
-        // "nestedTarget" needs to be inside the "target" smartobject.
-        // - This can be used to for example placing screenshots inside a desktop browser window
-        // - Sometimes mockup smart objects have transparent whitespace around the graphic. You can set a smaller target inside "target" by using "nestedTarget".
-        // - There's an example on the usage in both example script files. In example-1 it's in the mug mockup and in example-2 it's in the billboard mockup.
-        nestedTarget: '',  // String.
-        // Input example: ['$/_input/photos-1', './_input/photos-2']
-        // - Only looks for files from the input path(s)
-        // - Ignores nested folders
-        // - If you want to use nested folders you need to define each of them separately: ['$/_input/photos-1', '$/_input/photos-1/nested-photos']
-        // - Non-image files in the input folder will be ignored
-        // - Input files are sorted alphanumerically in ascending order. This is also the output order. 
-        // - You can add numbering if you want a specific order.
-        input: '', // String or Array. Path to the input files. 
-        inputNested: false, // Set to true to dig deep in the input folder(s)
-        inputFormats: 'tiff?|gif|jpe?g|bmp|eps|svg|png|ai|psd|pdf', // Separate multiple formats with a vertical pipe. 
-        // CSS style alignment values:
-        // 'left top' 
-        // 'left center' 
-        // 'left bottom' 
-        // 'right top'
-        // 'right center' 
-        // 'right bottom'
-        // 'center top'
-        // 'center center'
-        // 'center bottom'
-        align: 'center center',
-        // Resize values: 
-        // false
-        // 'fill'  
-        // 'fit'   
-        // 'xFill' - Fills horizontally (useful for screenshots, for instance)
-        // 'yFill  - Fill vertically
-        resize: 'fill',
-        // Set this to false if you want the resizing to take transparent whitespace in the input images into consideration. Settings this to false works with  align: 'center center'. This could be improved, but the crux of the issue 
-        trimTransparency: true, 
+        target: 'smart object layer name',
+        input: '$/input',
       },
-      
-      // You can set as many smart objects as you dare...
-      // { ... },
-      
+      // {..},  comma separate multiple smartobjects 
     ]
   },
-  
-  // You can set as many mockups as you dare...
-  // { ... },
+  // {..},  comma separate multiple mockups 
   
 ]);
 
 */
 
-
 // CHANGELOG
+
+// v.1.5.
+// - Not much changed...
+// - An attempt to suppress some dialogs
+// - Redoing readme / documentation: https://joonaspaakko.gitbook.io/batch-mockup-smart-object-replacement-jsx-photosho/
+
+// v.1.4.
+// - Added issue #6: Option to use input filename(s) as the output filename(s)
 
 // v.1.3.
 // Tested in Photoshop CC 2019
@@ -144,7 +68,18 @@ if ( $.includePath ) includePath = File.decode($.includePath);
 var docPath = '';
 
 function mockups( mockups ) {
+  
+  var displayDLG = app.displayDialogs;
+  app.displayDialogs = DialogModes.NO;
+  
+  var playbackDisplayDLG = app.playbackDisplayDialogs;
+  app.playbackDisplayDialogs = DialogModes.NO; // Affects Actions, which aren't used as of now, but maybe that changes in the future...
+  
   soReplaceBatch( mockups );
+  
+  app.displayDialogs = displayDLG;
+  app.playbackDisplayDialogs = playbackDisplayDLG;
+  
 }
 
 function soReplaceBatch( mockups ) {
