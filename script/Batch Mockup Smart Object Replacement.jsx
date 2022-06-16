@@ -1,5 +1,5 @@
 
-// v.1.5.
+// v.1.6.
 // Batch Mockup Smart Object Replacement.jsx
 
 // You'll need to incplude this file to another script file:
@@ -35,6 +35,11 @@ mockups([
 */
 
 // CHANGELOG
+
+// v.1.6.
+// - Fixed an issue with multiple smart objects where the output image count was determined by the number of input files for the first smart object (as defined in the setting script).
+// - Added sorting that should work in CS6 
+// - Fixed issue in CS6 where input files would not resize properly. 
 
 // v.1.5.
 // - Not much changed...
@@ -228,8 +233,45 @@ function prepFiles( item ) {
   };
   
   return inputFiles.sort(function (a, b) {
-    return app.compareWithNumbers(a.name, b.name)
+    if ( app.compareWithNumbers ) {
+      return app.compareWithNumbers(a.name, b.name)
+    }
+    else {
+      return sortAlphaNum(a.name, b.name);
+    }
   });
+  
+}
+
+// PS CS6
+function sortAlphaNum(a,b) {
+
+  var reA = /[^a-zA-Z]/g;
+  var reN = /[^0-9]/g;
+  var AInt = parseInt(a, 10);
+  var BInt = parseInt(b, 10);
+
+  if ( isNaN(AInt) && isNaN(BInt) ) {
+      var aA = a.replace(reA, "");
+      var bA = b.replace(reA, "");
+      if ( aA === bA ) {
+          var aN = parseInt(a.replace(reN, ""), 10);
+          var bN = parseInt(b.replace(reN, ""), 10);
+          return aN === bN ? 0 : aN > bN ? 1 : -1;
+      } 
+      else {
+          return aA > bA ? 1 : -1;
+      }
+  } 
+  else if ( isNaN(AInt) ) {
+      return 1;
+  } 
+  else if ( isNaN(BInt) ) {
+      return -1;
+  }
+  else {
+      return AInt > BInt ? 1 : -1;
+  }
   
 }
 
@@ -295,7 +337,7 @@ function findLargestArrayLength( items ) {
   for ( var i=0; i < items.length; i++ ) {
     var cItems = items[i];
     var filesLength = cItems.files.length;
-    if ( filesLength > max ) max = cItems.files;
+    if ( filesLength > max.length ) max = cItems.files;
   }
   
   return max;
@@ -510,7 +552,7 @@ function replaceSoContents( item, sourcepath ) {
           desc394.putBoolean( idLnkd, true );
         executeAction( idPlc, desc394, DialogModes.NO );
         
-        var bounds  = app.activeDocument.activeLayer.boundsNoEffects;        
+        var bounds  = app.activeDocument.activeLayer.boundsNoEffects || app.activeDocument.activeLayer.bounds;        
         var imageSize = {
           width: bounds[2].value - bounds[0].value,
           height: bounds[3].value - bounds[1].value
@@ -718,7 +760,7 @@ center bottom
 */
 function align( imageLayer, targetBounds, alignment ) {
   
-  var imageBounds = imageLayer.boundsNoEffects;
+  var imageBounds = imageLayer.boundsNoEffects || app.activeDocument.activeLayer.bounds;
   
   var image = {
     offset: {
