@@ -36,6 +36,10 @@ mockups([
 
 // CHANGELOG
 
+// v.1.7.
+// - Added folder structure capabilities to output.filename, which allows you to create a folder
+//   structure dynamically using the filename. For example filename: '@input/@mockup - @input'.
+
 // v.1.6.
 // - Fixed an issue with multiple smart objects where the output image count was determined by the number of input files for the first smart object (as defined in the setting script).
 // - Added sorting that should work in CS6 
@@ -190,8 +194,11 @@ function replaceLoop( data ) {
     }
     
     var outputPathPrefix = data.output.path + "/";
-    var outputFileName = outputPathPrefix + parseFilename( data, fileIndex, outputPathPrefix );
-    app.activeDocument.saveAs( new File( outputFileName ), saveOpts()[ data.output.format ](), true, Extension.LOWERCASE);
+    var outputFilePath = parseFilePath( data, fileIndex, outputPathPrefix );
+    var splitfilenamepath = outputFilePath.filename.split("/"); 
+    splitfilenamepath.splice(-1); 
+    newFolder( outputFilePath.path + splitfilenamepath.join("/") );
+    app.activeDocument.saveAs( new File( outputFilePath.fullpath ), saveOpts()[ data.output.format ](), true, Extension.LOWERCASE);
     
     if ( sourceFilePath === null ) app.activeDocument.activeLayer.visible = item.targetVisibility;
     
@@ -199,26 +206,25 @@ function replaceLoop( data ) {
   
 }
 
-function parseFilename( data, fileIndex, outputPathPrefix ) {
+function parseFilePath( data, fileIndex, outputPathPrefix ) {
   
   var fileNumber = fileIndex+1;
   if ( data.output.zeroPadding ) fileNumber = zeroPadding( fileNumber, data.maxLoop.toString().length );
   
   var inputFile = data.largestArray[fileIndex];
   var inputFilename = inputFile ? inputFile.name.replace(/\.[^\.]+$/, '') : fileNumber;
-  // var hasInput = data.output.filename.match(/@input/);
-  var filename = data.output.filename.replace('@mockup', data.doc.name).replace('$', fileNumber).replace('@input', inputFilename);
   
-  var outputFilename = filename + "." + data.output.format;
+  var filename = data.output.filename.replace(/@mockup/g, data.doc.name).replace(/\$/g, fileNumber).replace(/@input/g, inputFilename);
+  // Just a thought....
+  // var outputPath = outputPathPrefix.replace(/@mockup/g, data.doc.name).replace(/\$/g, fileNumber).replace(/@input/g, inputFilename);
+  var outputPath = outputPathPrefix;
   
-  // if ( hasInput ) {
-  //   var testOutputFile = new File( outputPathPrefix + outputFilename );
-  //   if ( testOutputFile.exists ) {
-  //     outputFilename = filename + " (" +  fileNumber + ")." + data.output.format;
-  //   }
-  // }
-  
-  return outputFilename;
+  return {
+    path: outputPath,
+    filename: filename,
+    extension: "." + data.output.format,
+    fullpath: outputPath + filename + "." + data.output.format,
+  };
   
 }
 
