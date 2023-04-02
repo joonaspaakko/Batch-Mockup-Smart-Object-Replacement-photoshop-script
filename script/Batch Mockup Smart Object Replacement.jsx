@@ -1,5 +1,5 @@
 
-// v.1.6.
+// v.1.7.
 // Batch Mockup Smart Object Replacement.jsx
 
 // You'll need to incplude this file to another script file:
