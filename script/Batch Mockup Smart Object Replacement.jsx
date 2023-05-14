@@ -1,5 +1,5 @@
 
-// v.1.7.
+// v.1.8.
 // Batch Mockup Smart Object Replacement.jsx
 
 // You'll need to incplude this file to another script file:
@@ -35,6 +35,13 @@ mockups([
 */
 
 // CHANGELOG
+
+// v.1.8.
+// - Added 2 new options that allow you to edit input files on the fly, which could potentially eliminate the need to batch process input files before running this mockup script.
+//   - These options are specific to each smart object in the mockup.
+//   - Usage example: 
+//       inputPlaced_runScript: '$/Input placed script.jsx',
+//       inputPlaced_runAction: ['Default Actions', 'Gradient Map'], // ['folder name', 'action name']
 
 // v.1.7.
 // - Added folder structure capabilities to output.filename, which allows you to create a folder
@@ -387,6 +394,8 @@ function replaceLoopOptionsFiller( rawData ) {
     itemObj.input  = rawItem.input || '$/input';
     itemObj.inputFormats = rawItem.inputFormats;
     itemObj.resize = (rawItem.resize || rawItem.resize === false) ? rawItem.resize : 'fill';
+    if ( rawItem.inputPlaced_runAction ) itemObj.inputPlaced_runAction = rawItem.inputPlaced_runAction;
+    if ( rawItem.inputPlaced_runScript ) itemObj.inputPlaced_runScript = rawItem.inputPlaced_runScript;
     items.push( itemObj );
   }
   
@@ -603,9 +612,6 @@ function replaceSoContents( item, sourcepath ) {
             
           }
           
-          soDoc.close( SaveOptions.DONOTSAVECHANGES );
-          if ( item.align ) returnLayer.remove();
-          
         }
         
         if ( item.resize ) {
@@ -653,6 +659,20 @@ function replaceSoContents( item, sourcepath ) {
         
         // HIDE BACKGROUND
         if ( doc.layers.length > 1 ) doc.backgroundLayer.visible = false;
+        
+        try {
+          if ( item.inputPlaced_runAction ) {
+            app.doAction(item.inputPlaced_runAction[1], item.inputPlaced_runAction[0]);
+          }
+          
+          if ( item.inputPlaced_runScript ) {
+            const scriptPath = absolutelyRelativePath( item.inputPlaced_runScript ).decoded;
+            $.evalFile( File(scriptPath) );
+          }
+        } catch(e) { alert(e) }
+        
+        soDoc.close( SaveOptions.DONOTSAVECHANGES );
+        if ( item.align ) returnLayer.remove();
         
       } catch (e) {}
     }
