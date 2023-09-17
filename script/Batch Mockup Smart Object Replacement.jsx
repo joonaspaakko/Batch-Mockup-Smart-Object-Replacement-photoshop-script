@@ -312,8 +312,8 @@ function getFiles(folder, item) {
     }
     
   }
-  
-  return filteredFiles.length < 1 ? null : filteredFiles;
+    
+  return filteredFiles.length < 1 ? [] : filteredFiles;
   
 }
 
