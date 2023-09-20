@@ -123,11 +123,10 @@ function soReplaceBatch( mockups ) {
         });
       }
       
-      soReplace({
-        output: mockup.output,
-        items: mockup.smartObjects,
-        noRepeats: mockup.noRepeats,
-      });
+      mockup.items = mockup.smartObjects;
+      delete mockup.smartObjects;
+      
+      soReplace( mockup );
       
       app.activeDocument.close( SaveOptions.DONOTSAVECHANGES );
       
@@ -181,13 +180,24 @@ function soReplace( rawData ) {
     var data = replaceLoopOptionsFiller( rawData );
     
     // Preparing files
-    for ( var i=0; i < data.items.length; i++ ) {
-      var item = data.items[i];
-      item.files = prepFiles( item );
+    if ( data.doc.input ) {
+      
+      data.doc.files = prepFiles( data.doc, data );
+      data.maxLoop = Math.ceil(data.doc.files.length / data.items.length);
+      data.largestArray = data.doc.files;
+      
+    }
+    else {
+      
+      each( data.items, function( item ) {
+        item.files = prepFiles( item );
+      });
+      
+      // This makes sure all file arrays are the same length
+      data = evenOutFileArrays( data );
+      
     }
     
-    // This makes sure all file arrays are the same length
-    data = evenOutFileArrays( data );
     replaceLoop( data );
     
     app.preferences.rulerUnits = rulerUnits;
@@ -199,7 +209,6 @@ function soReplace( rawData ) {
 function replaceLoop( data ) {
   
   for ( var fileIndex=0; fileIndex < data.maxLoop; fileIndex++ ) {
-    
     for ( var itemIndex=0; itemIndex < data.items.length; itemIndex++ ) {
       var item = data.items[ itemIndex ];
       if ( item.target ) {
@@ -213,7 +222,10 @@ function replaceLoop( data ) {
         if ( targetConfirmed ) {
           
           if ( fileIndex == 0 ) convertSoToEmbedded(); // Just in case the target layer is a linked SO...
-          var sourceFilePath = item.files[ fileIndex ];
+          
+          // alert( data.doc.inputIndex )
+          var sourceFilePath = data.doc.files ? data.doc.files[ data.doc.input ? data.doc.inputIndex : fileIndex ] : item.files[ fileIndex ];
+          if ( data.doc.input ) data.doc.inputIndex++;
           
           if ( sourceFilePath !== null ) {
             
@@ -270,13 +282,14 @@ function parseFilePath( data, fileIndex, outputPathPrefix ) {
   
 }
 
-function prepFiles( item ) {
+function prepFiles( item, data ) {
+  
   if ( typeof item.input === 'string' ) item.input = [ item.input ];
   
   var inputFiles = [];
   for ( var i=0; i < item.input.length; i++ ) {
     var inputFolder = new Folder( item.input[i] );
-    var files = getFiles( inputFolder, item );
+    var files = getFiles( inputFolder, item, data );
     if ( files ) inputFiles = inputFiles.concat( files );
   };
   
@@ -323,27 +336,30 @@ function sortAlphaNum(a,b) {
   
 }
 
-function getFiles(folder, item) {
+function getFiles(folder, item, data ) {
 
+  data = data || {};
+  data.doc = data.doc || {};
+  
   var filteredFiles = [];
   var files = folder.getFiles();
   
   for ( var i = 0; i < files.length; i++ ) {
     
     var file = files[i];
-    var regex = ".+\.(?:"+ (item.inputFormats ? item.inputFormats : 'tiff?|gif|jpe?g|bmp|eps|svg|png|ai|psd|pdf') +")$";
+    var regex = ".+\.(?:"+ (data.doc.inputFormats || item.inputFormats || 'tiff?|gif|jpe?g|bmp|eps|svg|png|ai|psd|pdf') +")$";
     var matchThis = new RegExp(regex, "i");
     var fileFilter = file.name.match( matchThis );
     
     var isFile = (file instanceof File && fileFilter);
     var isFolder = (file instanceof Folder);
     
-    if ( isFile ) {
-      filteredFiles.push( file );
-    }
-    else if ( isFolder && item.inputNested ) {
+    if ( isFolder && item.inputNested ) {
       var folder = file;
-      filteredFiles = filteredFiles.concat( this.getFiles( folder, item ) );
+      filteredFiles = filteredFiles.concat( this.getFiles( folder, item, data ) );
+    }
+    else if ( isFile ) {
+      filteredFiles.push( file );
     }
     
   }
@@ -412,8 +428,19 @@ function replaceLoopOptionsFiller( rawData ) {
   var doc = app.activeDocument;
   data.doc = {
     name: doc.name.replace(/\.[^\.]+$/, ''),
-    path: File.decode( doc.path ) + '/'
+    path: File.decode( doc.path ) + '/',
   };
+  
+  if ( rawData.inputNested ) data.doc.inputNested = rawData.inputNested;
+  data.doc.input  = rawData.input;
+  data.doc.inputFormats = rawData.inputFormats;
+  data.doc.inputIndex = 0;
+  
+  // Input folder path
+  if ( data.doc.input && typeof data.doc.input === 'string' ) data.doc.input = [ data.doc.input ];
+  each( data.doc.input, function( item, index ) {
+    data.doc.input[ index ] = absolutelyRelativePath( data.doc.input[index] ).decoded;
+  });
   
   docPath = data.doc.path;
   
@@ -450,9 +477,11 @@ function replaceLoopOptionsFiller( rawData ) {
     }
     
     // Input folder path
-    if ( typeof item.input === 'string' ) item.input = [ item.input ];
-    for ( var inputIndex=0; inputIndex < item.input.length; inputIndex++ ) {
-      item.input[ inputIndex ] = absolutelyRelativePath( item.input[inputIndex] ).decoded;
+    if ( !data.doc.input ) {
+      if ( typeof item.input === 'string' ) item.input = [ item.input ];
+      for ( var inputIndex=0; inputIndex < item.input.length; inputIndex++ ) {
+        item.input[ inputIndex ] = absolutelyRelativePath( item.input[inputIndex] ).decoded;
+      }
     }
     
   }
