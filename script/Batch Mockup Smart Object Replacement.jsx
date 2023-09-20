@@ -1,5 +1,5 @@
 
-// v.1.8.
+// v.1.9.
 // Batch Mockup Smart Object Replacement.jsx
 
 // You'll need to incplude this file to another script file:
@@ -36,8 +36,23 @@ mockups([
 
 // CHANGELOG
 
+// v.1.9.
+// - Now the property "mockupPath" can lead to a folder, in which case  it will 
+//   process all psd or psb files in that folder using the same settings.
+// - Added new property "mockupNested" that works the same as "inputNested", 
+//   but only if "mockupPath" is a folder.
+// - Added the properties `input` and `inputNested` to the smart object settings,
+//   just like each smart object target, but with this each smart object picks input
+//   files sequentially from the same pool of images.
+//     - I consider this to be an experimental feature since if you don't have the 
+//       perfect amount of images, the last image will contain leftovers from the 
+//       previous loop. For example if you have 9 images and 2 smart objects, the 
+//       output will be 5 images with the last smart object containing an image 
+//       from the previous output.
+
 // v.1.8.
-// - Added 2 new options that allow you to edit input files on the fly, which could potentially eliminate the need to batch process input files before running this mockup script.
+// - Added 2 new options that allow you to edit input files on the fly, which could potentially eliminate 
+//   the need to batch process input files before running this mockup script.
 //   - These options are specific to each smart object in the mockup.
 //   - Usage example: 
 //       inputPlaced_runScript: '$/Input placed script.jsx',
