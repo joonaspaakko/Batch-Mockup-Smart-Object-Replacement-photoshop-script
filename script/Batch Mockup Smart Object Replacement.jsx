@@ -450,12 +450,17 @@ function replaceLoopOptionsFiller( rawData ) {
   data.doc.input  = rawData.input;
   data.doc.inputFormats = rawData.inputFormats;
   data.doc.inputIndex = 0;
-  
+
   // Input folder path
-  if ( data.doc.input && typeof data.doc.input === 'string' ) data.doc.input = [ data.doc.input ];
-  each( data.doc.input, function( item, index ) {
-    data.doc.input[ index ] = absolutelyRelativePath( data.doc.input[index] ).decoded;
-  });
+  if ( data.doc.input ) {
+    if ( typeof data.doc.input === 'string' ) {
+      data.doc.input = [ data.doc.input ];
+    }
+
+    each( data.doc.input, function( item, index ) {
+      data.doc.input[ index ] = absolutelyRelativePath( data.doc.input[index] ).decoded;
+    });
+  }
   
   docPath = data.doc.path;
   
