@@ -267,7 +267,7 @@ function replaceLoop( data ) {
     var splitfilenamepath = outputFilePath.filename.split("/"); 
     splitfilenamepath.splice(-1); 
     newFolder( outputFilePath.path + splitfilenamepath.join("/") );
-    app.activeDocument.saveAs( new File( outputFilePath.fullpath ), saveOpts()[ data.output.format ](), true, Extension.LOWERCASE);
+    app.activeDocument.saveAs( new File( outputFilePath.fullpath ), saveOpts()[ data.output.format ](data), true, Extension.LOWERCASE);
     
     if ( sourceFilePath === null ) app.activeDocument.activeLayer.visible = item.targetVisibility;
     
@@ -527,7 +527,7 @@ function replaceLoopOptionsFiller( rawData ) {
 
 function saveOpts() {
   return {
-    psd: function() {
+    psd: function(configData) {
       
       var psd_saveOpts = new PhotoshopSaveOptions();
       
@@ -539,7 +539,7 @@ function saveOpts() {
       return psd_saveOpts;
       
     },
-    pdf: function() {
+    pdf: function(configData) {
       
       var presetName = '[High Quality Print]';
       var pdf_SaveOpts = new PDFSaveOptions();
@@ -547,16 +547,16 @@ function saveOpts() {
       return pdf_SaveOpts;
       
     },
-    jpg: function() {
+    jpg: function(configData) {
       
       var jpg_SaveOpts = new JPEGSaveOptions();
       jpg_SaveOpts.matte   = MatteType.WHITE;
-      jpg_SaveOpts.quality = 12;
+      jpg_SaveOpts.quality = configData.output.jpgQuality || 12;
       jpg_SaveOpts.formatOptions.STANDARDBASELINE;
       return jpg_SaveOpts;
       
     },
-    png: function() {
+    png: function(configData) {
       
       var png_SaveOpts = new PNGSaveOptions();
       png_SaveOpts.compression = 9;
@@ -564,7 +564,7 @@ function saveOpts() {
       return png_SaveOpts;
       
     },
-    tif: function() {
+    tif: function(configData) {
       
       var tiff_SaveOpts = new TiffSaveOptions();
       tiff_SaveOpts.alphaChannels      = true;
