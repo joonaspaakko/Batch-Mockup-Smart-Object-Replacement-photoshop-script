@@ -1,5 +1,5 @@
 
-// v.1.9.
+// v.2.0.
 // Batch Mockup Smart Object Replacement.jsx
 
 // You'll need to incplude this file to another script file:
@@ -35,6 +35,14 @@ mockups([
 */
 
 // CHANGELOG
+
+// v.2.0.
+// - Fixes an issue introduced in v.1.9, in which the entire process failed if you didn't use the new mockup `input` option.
+//    - FYI: That mockup `input` is in essence the same as target (smart object) `input`, except every smart object takes input files from the same folder sequentially.
+// - Fixes an issue with the `trimTranspancy` option that would prevent the entire mockup from processing.
+//    - It didn't affect other mockups that didn't use `trimTransparency`  
+// - Adds a new jpg specific output quality option `output.jpgQuality`
+// - Adds a new mockup option `ignore` that allows you to drop out certain mockups from being processed without having to comment out or remove them.
 
 // v.1.9.
 // - Now the property "mockupPath" can lead to a folder, in which case  it will 
