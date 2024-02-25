@@ -118,6 +118,9 @@ function soReplaceBatch( mockups ) {
   addMultipleMockupsByPath( mockups );
   
   each( mockups, function( mockup ) {
+
+    // Don't process this mockup
+    if ( mockup.ignore ) return;
     
     var mockupPSD = absolutelyRelativePath( mockup.mockupPath );
     if ( mockupPSD.file && mockupPSD.extension ) {
