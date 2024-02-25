@@ -696,6 +696,9 @@ function replaceSoContents( item, sourcepath ) {
             
           }
           
+          soDoc.close( SaveOptions.DONOTSAVECHANGES );
+          if ( item.align ) returnLayer.remove();
+          
         }
         
         if ( item.resize ) {
